@@ -20,10 +20,12 @@ import com.pagosservice.pagosservice.model.Payment;
 import com.pagosservice.pagosservice.repository.PaymentRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/pagos")
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentController {
 
     private static final String ESTADO_PROCESADO = "PROCESADO";
@@ -36,6 +38,8 @@ public class PaymentController {
     @PostMapping("/procesar")
     @ResponseStatus(HttpStatus.CREATED)
     public Payment procesarPago(@RequestBody Payment request) {
+        log.info("Procesando pago ordenId={} monto={} metodo={}",
+            request.getOrdenId(), request.getMonto(), request.getMetodoPago());
         Payment payment = Payment.builder()
                 .ordenId(request.getOrdenId())
                 .monto(request.getMonto())

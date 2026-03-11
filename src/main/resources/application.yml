@@ -1,6 +1,14 @@
 spring:
   application:
     name: pagos-service
+  cloud:
+    aws:
+      region:
+        static: ${CLOUDWATCH_REGION:us-east-1}
+      credentials:
+        access-key: ${CLOUDWATCH_ACCESS_KEY:test}
+        secret-key: ${CLOUDWATCH_SECRET_KEY:test}
+      endpoint: ${CLOUDWATCH_ENDPOINT:http://localhost:4566}
   data:
     mongodb:
       uri: ${MONGODB_URI:mongodb://localhost:27017/db_pagos}
@@ -14,3 +22,24 @@ eureka:
       defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka}
   instance:
     prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+observability:
+  cloudwatch:
+    logs:
+      endpoint: ${CLOUDWATCH_ENDPOINT:http://localhost:4566}
+      region: ${CLOUDWATCH_REGION:us-east-1}
+      access-key: ${CLOUDWATCH_ACCESS_KEY:test}
+      secret-key: ${CLOUDWATCH_SECRET_KEY:test}
+      log-group: ${CLOUDWATCH_LOG_GROUP:pagos-log-group}
+      log-stream-prefix: ${CLOUDWATCH_LOG_STREAM_PREFIX:pagos-service}
+
+logging:
+  level:
+    root: INFO
+    com.pagosservice.pagosservice: DEBUG
