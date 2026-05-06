@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.pagosservice.pagosservice.client.OrderClient;
 import com.pagosservice.pagosservice.dto.UpdateOrderStatusRequest;
+import com.pagosservice.pagosservice.messaging.PaymentReceivedEventProducer;
 import com.pagosservice.pagosservice.model.Payment;
 import com.pagosservice.pagosservice.repository.PaymentRepository;
 
@@ -34,6 +35,7 @@ public class PaymentController {
 
     private final PaymentRepository paymentRepository;
     private final OrderClient orderClient;
+    private final PaymentReceivedEventProducer paymentReceivedEventProducer;
 
     @PostMapping("/procesar")
     @ResponseStatus(HttpStatus.CREATED)
@@ -56,6 +58,13 @@ public class PaymentController {
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
                     "Pago registrado, pero no se pudo actualizar el estado de la orden", ex);
         }
+
+        paymentReceivedEventProducer.publishPaymentReceived(
+            savedPayment.getOrdenId(),
+            "N/A",
+            savedPayment.getMonto(),
+            savedPayment.getMetodoPago(),
+            savedPayment.getId());
 
         return savedPayment;
     }

@@ -12,9 +12,18 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_URI:mongodb://localhost:27017/db_pagos}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:host.docker.internal:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 server:
   port: 8083
+
+app:
+  topic:
+    payment-received: ${PAYMENT_RECEIVED_TOPIC:payment_received_events}
 
 eureka:
   client:
@@ -43,3 +52,5 @@ logging:
   level:
     root: INFO
     com.pagosservice.pagosservice: DEBUG
+    org.springframework.kafka: DEBUG
+    org.apache.kafka: DEBUG
